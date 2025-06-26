@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Token Wallet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wallet-container {
+            width: 480px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .wallet-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .wallet-logo {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .wallet-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .wallet-subtitle {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .account-section {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .account-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .account-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .account-details {
+            flex: 1;
+        }
+
+        .account-details h3 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .account-address {
+            font-size: 12px;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .wallet-switch-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            margin-left: 10px;
+        }
+
+        .wallet-switch-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .wallet-selector {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .wallet-selector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .wallet-selector-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .wallet-selector-subtitle {
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .custom-address-section {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 16px;
+        }
+
+        .form-help-text {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+
+        .wallet-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .wallet-option:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .wallet-option.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .wallet-option-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 12px;
+        }
+
+        .wallet-option-details {
+            flex: 1;
+        }
+
+        .wallet-option-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .wallet-option-address {
+            font-size: 11px;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .wallet-remove-btn {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #dc3545;
+            transition: all 0.2s;
+            margin-left: 8px;
+        }
+
+        .wallet-remove-btn:hover {
+            background: rgba(220, 53, 69, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .balance-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 300;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .balance-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .status-indicator {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-registered {
+            background: #e8f5e8;
+            color: #2d5a2d;
+        }
+
+        .status-unregistered {
+            background: #fef2f2;
+            color: #7f1d1d;
+        }
+
+        .status-frozen {
+            background: #fef3c7;
+            color: #78350f;
+        }
+
+        .actions-section {
+            padding: 20px;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #e9ecef;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .transfer-form {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .xml-parser-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .xml-parser-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .xml-parser-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .xml-textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        .xml-fields {
+            margin-top: 12px;
+            display: none;
+        }
+
+        .xml-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .xml-field-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .xml-field-value {
+            font-size: 12px;
+            font-family: monospace;
+            color: #333;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #7f1d1d;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2d5a2d;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #eee;
+            background: #f8f9fa;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="wallet-container">
+        <!-- Header -->
+        <div class="wallet-header">
+            <div class="wallet-logo">🏦</div>
+            <div class="wallet-title">Cool New Wallet</div>
+        </div>
+
+        <!-- Account Section -->
+        <div class="account-section">
+            <div class="account-info">
+                <div class="account-avatar" id="accountAvatar">?</div>
+                <div class="account-details">
+                    <h3 id="accountName">Account 1</h3>
+                    <div class="account-address" id="accountAddress">Connecting...</div>
+                </div>
+                <button class="wallet-switch-btn" onclick="showWalletSwitcher()" title="Switch wallet">⚡</button>
+            </div>
+
+            <div class="balance-section">
+                <div class="balance-amount" id="balanceAmount">--.--</div>
+                <div class="balance-label">Deposit Tokens</div>
+            </div>
+
+            <div class="status-indicators">
+                <div class="status-indicator status-unregistered" id="registrationStatus">
+                    Unregistered
+                </div>
+                <div class="status-indicator" id="frozenStatus" style="display: none;">
+                    Frozen
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions Section -->
+        <div class="actions-section">
+            <div class="action-buttons">
+                <button class="action-btn btn-primary" onclick="showTransferForm()">
+                    💸 Send
+                </button>
+                <button class="action-btn btn-secondary" onclick="refreshAccount()">
+                    🔄 Refresh
+                </button>
+                <button class="action-btn btn-secondary" onclick="registerAccount()">
+                    📝 Register
+                </button>
+                <button class="action-btn btn-secondary" onclick="showXmlParser()">
+                    📄 XML Parser
+                </button>
+            </div>
+
+            <!-- Wallet Selector Section -->
+            <div class="wallet-selector" id="walletSelector">
+                <div class="wallet-selector-header">
+                    <div class="wallet-selector-title">Select Wallet</div>
+                    <button class="action-btn btn-secondary" onclick="hideWalletSwitcher()" style="padding: 4px 8px; font-size: 12px;">✕</button>
+                </div>
+                
+                <!-- Custom Wallet Input -->
+                <div class="custom-address-section">
+                    <div class="form-group">
+                        <label class="form-label">Or import wallet with private key:</label>
+                        <input type="password" class="form-input" id="customPrivateKey" placeholder="Private key (0x...)" />
+                        <div class="form-help-text">Enter a private key to import a wallet with full transaction capabilities</div>
+                    </div>
+                    <button class="action-btn btn-primary" onclick="importCustomWallet()" style="width: 100%; margin-bottom: 16px;">
+                        Import Wallet
+                    </button>
+                </div>
+                
+                <!-- Predefined Wallets -->
+                <div class="wallet-selector-subtitle">Available Demo Accounts:</div>
+                <div id="walletOptions">
+                    <!-- Wallet options will be populated here -->
+                </div>
+            </div>
+
+            <!-- Transfer Form -->
+            <div class="transfer-form" id="transferForm">
+                <div class="form-group">
+                    <label class="form-label">Recipient Address</label>
+                    <input type="text" class="form-input" id="recipientAddress" placeholder="0x..." />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount (DTK)</label>
+                    <input type="number" class="form-input" id="transferAmount" placeholder="0.00" step="0.01" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Extra Data (Optional)</label>
+                    <textarea class="form-input" id="extraData" placeholder="Additional data or memo for this transfer..." rows="3"></textarea>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn btn-primary" onclick="executeTransfer()">
+                        Send Transfer
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="hideTransferForm()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+            <!-- XML Parser Section -->
+            <div class="xml-parser-section" id="xmlParserSection">
+                <div class="xml-parser-header">
+                    <div class="xml-parser-title">Bank Authorization XML</div>
+                    <button class="action-btn btn-secondary" onclick="hideXmlParser()" style="padding: 4px 8px; font-size: 12px;">✕</button>
+                </div>
+                <textarea class="xml-textarea" id="xmlInput" placeholder="Paste XML authorization data here..."></textarea>
+                <div class="action-buttons">
+                    <button class="action-btn btn-primary" onclick="parseXml()">
+                        Parse XML
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="clearXml()">
+                        Clear
+                    </button>
+                </div>
+                <div class="xml-fields" id="xmlFields">
+                    <!-- Parsed fields will appear here -->
+                </div>
+            </div>
+
+            <!-- Status Messages -->
+            <div class="loading" id="loading">
+                Processing transaction...
+            </div>
+            <div class="error" id="error"></div>
+            <div class="success" id="success"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-text">
+                Connected to Bank Server
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for detailed views -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Details</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="modalBody">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - will be loaded from server
+        let config = {
+            bankServerUrl: 'http://localhost:3000',
+            walletApiUrl: 'http://localhost:3000/wallet',
+            rpcUrl: 'http://localhost:8545',
+            depositTokenAddress: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+            refreshInterval: 30000 // 30 seconds
+        };
+
+        // Global state
+        let currentAccount = 'account1'; // Default account
+        let availableAccounts = [];
+        let customWallets = []; // Store custom wallets with private keys
+        let walletConnected = false;
+        let refreshTimer = null;
+
+        // DOM elements
+        const elements = {
+            accountAddress: document.getElementById('accountAddress'),
+            accountAvatar: document.getElementById('accountAvatar'),
+            balanceAmount: document.getElementById('balanceAmount'),
+            registrationStatus: document.getElementById('registrationStatus'),
+            frozenStatus: document.getElementById('frozenStatus'),
+            transferForm: document.getElementById('transferForm'),
+            xmlParserSection: document.getElementById('xmlParserSection'),
+            xmlInput: document.getElementById('xmlInput'),
+            xmlFields: document.getElementById('xmlFields'),
+            walletSelector: document.getElementById('walletSelector'),
+            walletOptions: document.getElementById('walletOptions'),
+            loading: document.getElementById('loading'),
+            error: document.getElementById('error'),
+            success: document.getElementById('success'),
+            modal: document.getElementById('modal'),
+            modalTitle: document.getElementById('modalTitle'),
+            modalBody: document.getElementById('modalBody')
+        };
+
+        // Initialize wallet on load
+        window.addEventListener('DOMContentLoaded', initializeWallet);
+
+        async function loadConfiguration() {
+            try {
+                const response = await fetch('/config');
+                if (response.ok) {
+                    const serverConfig = await response.json();
+                    config.bankServerUrl = serverConfig.bankServerUrl;
+                    config.walletApiUrl = serverConfig.walletApiUrl;
+                    config.rpcUrl = serverConfig.rpcUrl;
+                    config.depositTokenAddress = serverConfig.depositTokenAddress;
+                    
+                    console.log('Configuration loaded:', config);
+                } else {
+                    console.warn('Failed to load server configuration, using defaults');
+                }
+            } catch (error) {
+                console.warn('Failed to load server configuration, using defaults:', error);
+            }
+        }
+
+        async function initializeWallet() {
+            try {
+                showLoading('Loading configuration...');
+                
+                // Load configuration from server
+                await loadConfiguration();
+                
+                showLoading('Connecting to wallet...');
+                
+                // Get available accounts from backend
+                const response = await fetch(`${config.walletApiUrl}/accounts`);
+                const data = await response.json();
+                availableAccounts = data.accounts;
+                
+                if (availableAccounts.length > 0) {
+                    walletConnected = true;
+                    updateAccountDisplay();
+                    await refreshAccountData();
+                    
+                    // Start auto-refresh
+                    startAutoRefresh();
+                    
+                    hideLoading();
+                    showSuccess('Wallet connected successfully!');
+                } else {
+                    throw new Error('No accounts available');
+                }
+            } catch (error) {
+                hideLoading();
+                showError('Failed to connect wallet: ' + error.message);
+            }
+        }
+
+        function updateAccountDisplay() {
+            if (!currentAccount) return;
+            
+            // Check if it's a demo account
+            const demoAccount = availableAccounts.find(acc => acc.name === currentAccount);
+            if (demoAccount) {
+                elements.accountAddress.textContent = formatAddress(demoAccount.address);
+                elements.accountAvatar.textContent = demoAccount.address.slice(2, 4).toUpperCase();
+                document.getElementById('accountName').textContent = demoAccount.name.charAt(0).toUpperCase() + demoAccount.name.slice(1);
+                return;
+            }
+            
+            // Check if it's a custom wallet
+            const customWallet = customWallets.find(wallet => wallet.id === currentAccount);
+            if (customWallet) {
+                elements.accountAddress.textContent = formatAddress(customWallet.address);
+                elements.accountAvatar.textContent = customWallet.address.slice(2, 4).toUpperCase();
+                document.getElementById('accountName').textContent = 'Imported Wallet';
+            }
+        }
+
+        async function refreshAccountData() {
+            if (!currentAccount) return;
+            
+            try {
+                showLoading('Refreshing account data...');
+                
+                // Get account info from backend
+                const accountInfo = await fetchAccountInfo();
+                updateAccountInfo(accountInfo);
+                hideLoading();
+                
+            } catch (error) {
+                hideLoading();
+                showError('Failed to refresh account data: ' + error.message);
+            }
+        }
+
+        async function fetchBankInfo() {
+            try {
+                const response = await fetch(`${config.bankServerUrl}/bank/info`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching bank info:', error);
+                return null;
+            }
+        }
+
+        async function fetchAccountInfo() {
+            try {
+                const response = await fetch(`${config.walletApiUrl}/accounts/${currentAccount}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching account info:', error);
+                return {
+                    balance: '0.00',
+                    registered: false,
+                    frozen: false,
+                    nonce: 0,
+                    sponsor: '0x0000000000000000000000000000000000000000',
+                    lockedBalance: '0.00'
+                };
+            }
+        }
+
+        function updateAccountInfo(info) {
+            elements.balanceAmount.textContent = info.balance;
+            
+            // Update registration status
+            if (info.registered) {
+                elements.registrationStatus.className = 'status-indicator status-registered';
+                elements.registrationStatus.textContent = 'Registered';
+            } else {
+                elements.registrationStatus.className = 'status-indicator status-unregistered';
+                elements.registrationStatus.textContent = 'Unregistered';
+            }
+            
+            // Update frozen status
+            if (info.frozen) {
+                elements.frozenStatus.style.display = 'block';
+                elements.frozenStatus.className = 'status-indicator status-frozen';
+                elements.frozenStatus.textContent = 'Account Frozen';
+            } else {
+                elements.frozenStatus.style.display = 'none';
+            }
+            
+            // Remove any existing read-only notice since we no longer have read-only custom addresses
+            const existingNotice = document.getElementById('readOnlyNotice');
+            if (existingNotice) {
+                existingNotice.remove();
+            }
+        }
+
+        function showTransferForm() {
+            elements.transferForm.style.display = 'block';
+            hideMessages();
+        }
+
+        function hideTransferForm() {
+            elements.transferForm.style.display = 'none';
+            document.getElementById('recipientAddress').value = '';
+            document.getElementById('transferAmount').value = '';
+            document.getElementById('extraData').value = '';
+        }
+
+        async function executeTransfer() {
+            const recipient = document.getElementById('recipientAddress').value;
+            const amount = document.getElementById('transferAmount').value;
+            const extraData = document.getElementById('extraData').value;
+            
+            if (!recipient || !amount) {
+                showError('Please fill in all fields');
+                return;
+            }
+            
+            if (!isValidAddress(recipient)) {
+                showError('Invalid recipient address');
+                return;
+            }
+            
+            try {
+                showLoading('Preparing transfer...');
+                
+                // First, get the current account nonce from the contract
+                const accountInfo = await fetchAccountInfo();
+                const nonce = accountInfo.nonce || 0;
+                
+                showLoading('Executing transfer...');
+                
+                const requestBody = {
+                    recipient: recipient,
+                    amount: amount,
+                    nonce: nonce
+                };
+                
+                if (extraData.trim()) {
+                    requestBody.extraData = extraData.trim();
+                }
+                
+                const response = await fetch(`${config.walletApiUrl}/accounts/${currentAccount}/transfer`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Transfer failed');
+                }
+                
+                hideLoading();
+                hideTransferForm();
+                showSuccess(`Transfer completed! Transaction: ${result.transactionHash.slice(0, 10)}...`);
+                
+                // Refresh account data
+                await refreshAccountData();
+                
+            } catch (error) {
+                hideLoading();
+                showError('Transfer failed: ' + error.message);
+            }
+        }
+
+        async function registerAccount() {
+            if (!currentAccount) {
+                showError('No account connected');
+                return;
+            }
+            
+            try {
+                showLoading('Registering with bank...');
+                
+                const response = await fetch(`${config.walletApiUrl}/accounts/${currentAccount}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const result = await response.json();
+                
+                hideLoading();
+                
+                if (response.ok) {
+                    showSuccess('Account registered successfully!');
+                    await refreshAccountData();
+                } else {
+                    showError('Registration failed: ' + result.error);
+                }
+                
+            } catch (error) {
+                hideLoading();
+                showError('Registration failed: ' + error.message);
+            }
+        }
+
+        function showXmlParser() {
+            elements.xmlParserSection.style.display = 'block';
+            hideMessages();
+        }
+
+        function hideXmlParser() {
+            elements.xmlParserSection.style.display = 'none';
+            clearXml();
+        }
+
+        function parseXml() {
+            const xmlText = elements.xmlInput.value.trim();
+            
+            if (!xmlText) {
+                showError('Please paste XML content first');
+                return;
+            }
+            
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                
+                // Check for parsing errors
+                const parseError = xmlDoc.querySelector('parsererror');
+                if (parseError) {
+                    throw new Error('Invalid XML format');
+                }
+                
+                // Extract fields from XML
+                const fields = extractXmlFields(xmlDoc);
+                displayXmlFields(fields);
+                
+                showSuccess('XML parsed successfully!');
+                
+            } catch (error) {
+                showError('XML parsing failed: ' + error.message);
+            }
+        }
+
+        function extractXmlFields(xmlDoc) {
+            const fields = [];
+            
+            // Common authorization fields to look for
+            const fieldNames = [
+                'sender', 'recipient', 'amount', 'expiration', 'nonce',
+                'authorization', 'signature', 'timestamp', 'limit'
+            ];
+            
+            fieldNames.forEach(fieldName => {
+                const elements = xmlDoc.querySelectorAll(fieldName);
+                elements.forEach((element, index) => {
+                    fields.push({
+                        name: fieldName + (index > 0 ? `[${index}]` : ''),
+                        value: element.textContent,
+                        type: 'text'
+                    });
+                });
+            });
+            
+            // Also extract any other elements
+            const allElements = xmlDoc.querySelectorAll('*');
+            allElements.forEach(element => {
+                if (element.children.length === 0 && element.textContent.trim()) {
+                    const tagName = element.tagName.toLowerCase();
+                    if (!fieldNames.includes(tagName)) {
+                        fields.push({
+                            name: tagName,
+                            value: element.textContent,
+                            type: 'text'
+                        });
+                    }
+                }
+            });
+            
+            return fields;
+        }
+
+        function displayXmlFields(fields) {
+            elements.xmlFields.innerHTML = '';
+            
+            if (fields.length === 0) {
+                elements.xmlFields.innerHTML = '<div class="xml-field"><span>No fields found in XML</span></div>';
+            } else {
+                fields.forEach(field => {
+                    const fieldDiv = document.createElement('div');
+                    fieldDiv.className = 'xml-field';
+                    fieldDiv.innerHTML = `
+                        <span class="xml-field-name">${field.name}</span>
+                        <span class="xml-field-value" title="${field.value}">${field.value}</span>
+                    `;
+                    elements.xmlFields.appendChild(fieldDiv);
+                });
+            }
+            
+            elements.xmlFields.style.display = 'block';
+        }
+
+        function clearXml() {
+            elements.xmlInput.value = '';
+            elements.xmlFields.style.display = 'none';
+            elements.xmlFields.innerHTML = '';
+        }
+
+        function showWalletSwitcher() {
+            populateWalletOptions();
+            elements.walletSelector.style.display = 'block';
+            hideMessages();
+        }
+
+        function hideWalletSwitcher() {
+            elements.walletSelector.style.display = 'none';
+            document.getElementById('customPrivateKey').value = '';
+        }
+
+        function populateWalletOptions() {
+            elements.walletOptions.innerHTML = '';
+            
+            // Add demo accounts
+            availableAccounts.forEach(account => {
+                const walletOption = document.createElement('div');
+                walletOption.className = `wallet-option ${account.name === currentAccount ? 'active' : ''}`;
+                walletOption.onclick = () => switchWallet(account.name);
+                
+                walletOption.innerHTML = `
+                    <div class="wallet-option-avatar">${account.address.slice(2, 4).toUpperCase()}</div>
+                    <div class="wallet-option-details">
+                        <div class="wallet-option-name">${account.name.charAt(0).toUpperCase() + account.name.slice(1)}</div>
+                        <div class="wallet-option-address">${formatAddress(account.address)}</div>
+                    </div>
+                `;
+                
+                elements.walletOptions.appendChild(walletOption);
+            });
+            
+            // Add custom wallets if any exist
+            if (customWallets.length > 0) {
+                const separator = document.createElement('div');
+                separator.className = 'wallet-selector-subtitle';
+                separator.textContent = 'Imported Wallets:';
+                separator.style.marginTop = '16px';
+                elements.walletOptions.appendChild(separator);
+                
+                customWallets.forEach(wallet => {
+                    const walletOption = document.createElement('div');
+                    walletOption.className = `wallet-option ${wallet.id === currentAccount ? 'active' : ''}`;
+                    walletOption.onclick = () => switchWallet(wallet.id);
+                    
+                    walletOption.innerHTML = `
+                        <div class="wallet-option-avatar">${wallet.address.slice(2, 4).toUpperCase()}</div>
+                        <div class="wallet-option-details">
+                            <div class="wallet-option-name">Imported Wallet</div>
+                            <div class="wallet-option-address">${formatAddress(wallet.address)}</div>
+                        </div>
+                        <button class="wallet-remove-btn" onclick="removeCustomWallet('${wallet.id}'); event.stopPropagation();" title="Remove">✕</button>
+                    `;
+                    
+                    elements.walletOptions.appendChild(walletOption);
+                });
+            }
+        }
+
+        async function switchWallet(accountIdentifier) {
+            if (accountIdentifier === currentAccount) {
+                hideWalletSwitcher();
+                return;
+            }
+            
+            try {
+                showLoading('Switching wallet...');
+                
+                currentAccount = accountIdentifier;
+                updateAccountDisplay();
+                await refreshAccountData();
+                
+                hideWalletSwitcher();
+                hideLoading();
+                
+                // Show different success message for demo accounts vs custom addresses
+                const account = availableAccounts.find(acc => acc.name === accountIdentifier);
+                const displayName = account ? accountIdentifier : formatAddress(accountIdentifier);
+                showSuccess(`Switched to ${displayName}`);
+                
+            } catch (error) {
+                hideLoading();
+                showError('Failed to switch wallet: ' + error.message);
+            }
+        }
+
+        async function importCustomWallet() {
+            const privateKey = document.getElementById('customPrivateKey').value.trim();
+            
+            if (!privateKey) {
+                showError('Please enter a private key');
+                return;
+            }
+            
+            if (!isValidPrivateKey(privateKey)) {
+                showError('Invalid private key format. Please enter a 64-character hex string.');
+                return;
+            }
+            
+            try {
+                showLoading('Importing wallet...');
+                
+                // Derive address from private key
+                const address = await deriveAddressFromPrivateKey(privateKey);
+                
+                // Generate unique ID for this wallet
+                const walletId = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                
+                // Add the wallet to backend
+                const response = await fetch(`${config.walletApiUrl}/wallets/import`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: walletId,
+                        privateKey: privateKey.startsWith('0x') ? privateKey : '0x' + privateKey
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to import wallet');
+                }
+                
+                // Add to custom wallets if not already there
+                if (!customWallets.some(wallet => wallet.address.toLowerCase() === address.toLowerCase())) {
+                    customWallets.push({ 
+                        id: walletId,
+                        address: address 
+                    });
+                }
+                
+                hideLoading();
+                showSuccess(`Wallet imported successfully!`);
+                
+                // Switch to the imported wallet
+                await switchWallet(walletId);
+                
+            } catch (error) {
+                hideLoading();
+                showError('Failed to import wallet: ' + error.message);
+            }
+        }
+
+        function removeCustomWallet(walletId) {
+            customWallets = customWallets.filter(wallet => wallet.id !== walletId);
+            
+            // Remove from backend
+            fetch(`${config.walletApiUrl}/wallets/${walletId}`, {
+                method: 'DELETE'
+            }).catch(error => {
+                console.error('Error removing wallet from backend:', error);
+            });
+            
+            // If we're currently using this wallet, switch back to first demo account
+            if (currentAccount === walletId) {
+                if (availableAccounts.length > 0) {
+                    switchWallet(availableAccounts[0].name);
+                }
+            }
+            
+            // Refresh the wallet options
+            populateWalletOptions();
+        }
+
+        function refreshAccount() {
+            refreshAccountData();
+        }
+
+        function startAutoRefresh() {
+            if (refreshTimer) clearInterval(refreshTimer);
+            refreshTimer = setInterval(refreshAccountData, config.refreshInterval);
+        }
+
+        function stopAutoRefresh() {
+            if (refreshTimer) {
+                clearInterval(refreshTimer);
+                refreshTimer = null;
+            }
+        }
+
+        // Utility functions
+        function formatAddress(address) {
+            if (!address || address.length < 10) return address;
+            return `${address}`;
+        }
+
+        function isValidAddress(address) {
+            return /^0x[a-fA-F0-9]{40}$/.test(address);
+        }
+
+        function isValidPrivateKey(privateKey) {
+            // Remove 0x prefix if present and check if it's 64 hex characters
+            const cleanKey = privateKey.replace(/^0x/, '');
+            return /^[a-fA-F0-9]{64}$/.test(cleanKey);
+        }
+
+        async function deriveAddressFromPrivateKey(privateKey) {
+            try {
+                // Ensure private key has 0x prefix
+                const formattedKey = privateKey.startsWith('0x') ? privateKey : '0x' + privateKey;
+                
+                // Make a request to backend to derive the address safely
+                const response = await fetch(`${config.walletApiUrl}/derive-address`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ privateKey: formattedKey })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to derive address');
+                }
+                
+                const result = await response.json();
+                return result.address;
+            } catch (error) {
+                console.error('Error deriving address:', error);
+                throw error;
+            }
+        }
+
+        function showLoading(message = 'Loading...') {
+            elements.loading.textContent = message;
+            elements.loading.style.display = 'block';
+            hideMessages(['loading']);
+        }
+
+        function hideLoading() {
+            elements.loading.style.display = 'none';
+        }
+
+        function showError(message) {
+            elements.error.textContent = message;
+            elements.error.style.display = 'block';
+            hideMessages(['error']);
+            setTimeout(() => {
+                elements.error.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            elements.success.textContent = message;
+            elements.success.style.display = 'block';
+            hideMessages(['success']);
+            setTimeout(() => {
+                elements.success.style.display = 'none';
+            }, 5000);
+        }
+
+        function hideMessages(except = []) {
+            if (!except.includes('loading')) elements.loading.style.display = 'none';
+            if (!except.includes('error')) elements.error.style.display = 'none';
+            if (!except.includes('success')) elements.success.style.display = 'none';
+        }
+
+        function showModal(title, content) {
+            elements.modalTitle.textContent = title;
+            elements.modalBody.innerHTML = content;
+            elements.modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            elements.modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        elements.modal.addEventListener('click', (e) => {
+            if (e.target === elements.modal) {
+                closeModal();
+            }
+        });
+
+        // Close auto-refresh when page is hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoRefresh();
+            } else {
+                startAutoRefresh();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Token Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #dc3545 0%, #6c757d 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .admin-logo {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .admin-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .admin-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .admin-content {
+            padding: 30px;
+        }
+
+        .auth-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .auth-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #dc3545;
+        }
+
+        .status-indicator.connected {
+            background: #28a745;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .form-help-text {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+
+        .admin-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #333;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .admin-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .admin-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dc3545;
+        }
+
+        .action-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: 4px;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .action-form {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+            border: 1px solid #dee2e6;
+        }
+
+        .action-form.active {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-top: 12px;
+            display: none;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-top: 12px;
+            display: none;
+            border: 1px solid #c3e6cb;
+        }
+
+        .footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #eee;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="admin-logo">⚙️</div>
+            <div class="admin-title">Deposit Token Admin Panel</div>
+            <div class="admin-subtitle">Administrative Controls for Regulatory Compliance</div>
+        </div>
+
+        <!-- Content -->
+        <div class="admin-content">
+            <!-- Authentication Section -->
+            <div class="auth-section">
+                <div class="auth-title">
+                    <span class="status-indicator" id="connectionStatus"></span>
+                    Administrator Authentication
+                </div>
+                
+                <div id="authForm">
+                    <div class="form-group">
+                        <label class="form-label">Private Key</label>
+                        <input type="password" class="form-input" id="adminPrivateKey" placeholder="Enter administrator private key (0x...)" />
+                        <div class="form-help-text">Enter your private key to access administrative functions. This will be verified against the contract owner.</div>
+                    </div>
+                    <button class="action-btn btn-primary" onclick="connectAdmin()">
+                        🔑 Connect as Administrator
+                    </button>
+                </div>
+
+                <div id="authInfo" style="display: none;">
+                    <div class="admin-info">
+                        <div class="info-card">
+                            <div class="info-label">Administrator Address</div>
+                            <div class="info-value" id="adminAddress">Not connected</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Contract Owner</div>
+                            <div class="info-value" id="contractOwner">Loading...</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Total Supply</div>
+                            <div class="info-value" id="totalSupply">Loading...</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Authorization URI</div>
+                            <div class="info-value" id="authorizationUri">Loading...</div>
+                        </div>
+                    </div>
+                    <button class="action-btn btn-secondary" onclick="disconnectAdmin()">
+                        🚪 Disconnect
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Functions -->
+            <div id="adminFunctions" style="display: none;">
+                <div class="admin-sections">
+                    <!-- User Management -->
+                    <div class="admin-section">
+                        <div class="section-title">👥 User Management</div>
+                        
+                        <button class="action-btn btn-primary" onclick="showForm('registerUserForm')">
+                            ➕ Register User
+                        </button>
+                        <button class="action-btn btn-secondary" onclick="showForm('setSponsorForm')">
+                            🏢 Set Sponsor
+                        </button>
+                        <button class="action-btn btn-secondary" onclick="showForm('moveAccountForm')">
+                            🔄 Move Account
+                        </button>
+
+                        <!-- Register User Form -->
+                        <div class="action-form" id="registerUserForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">User Address</label>
+                                    <input type="text" class="form-input" id="registerUserAddress" placeholder="0x..." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Sponsor Address</label>
+                                    <input type="text" class="form-input" id="registerSponsorAddress" placeholder="0x..." />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-success" onclick="registerUser()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+
+                        <!-- Set Sponsor Form -->
+                        <div class="action-form" id="setSponsorForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Account Address</label>
+                                    <input type="text" class="form-input" id="setSponsorAccountAddress" placeholder="0x..." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New Sponsor Address</label>
+                                    <input type="text" class="form-input" id="setSponsorNewSponsor" placeholder="0x..." />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-success" onclick="setSponsor()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+
+                        <!-- Move Account Form -->
+                        <div class="action-form" id="moveAccountForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Current Address</label>
+                                    <input type="text" class="form-input" id="moveAccountCurrentAddress" placeholder="0x..." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New Address</label>
+                                    <input type="text" class="form-input" id="moveAccountNewAddress" placeholder="0x..." />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-success" onclick="moveAccount()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- Sponsor Management -->
+                    <div class="admin-section">
+                        <div class="section-title">🏢 Sponsor Management</div>
+                        
+                        <button class="action-btn btn-success" onclick="showForm('newSponsorForm')">
+                            ➕ Add Sponsor
+                        </button>
+                        <button class="action-btn btn-danger" onclick="showForm('removeSponsorForm')">
+                            ➖ Remove Sponsor
+                        </button>
+
+                        <!-- New Sponsor Form -->
+                        <div class="action-form" id="newSponsorForm">
+                            <div class="form-row single">
+                                <div class="form-group">
+                                    <label class="form-label">Sponsor Address</label>
+                                    <input type="text" class="form-input" id="newSponsorAddress" placeholder="0x..." />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-success" onclick="addSponsor()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+
+                        <!-- Remove Sponsor Form -->
+                        <div class="action-form" id="removeSponsorForm">
+                            <div class="form-row single">
+                                <div class="form-group">
+                                    <label class="form-label">Sponsor Address</label>
+                                    <input type="text" class="form-input" id="removeSponsorAddress" placeholder="0x..." />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-danger" onclick="removeSponsor()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- Token Operations -->
+                    <div class="admin-section">
+                        <div class="section-title">💰 Token Operations</div>
+                        
+                        <button class="action-btn btn-success" onclick="showForm('mintForm')">
+                            🪙 Mint Tokens
+                        </button>
+                        <button class="action-btn btn-danger" onclick="showForm('burnForm')">
+                            🔥 Burn Supply
+                        </button>
+
+                        <!-- Mint Form -->
+                        <div class="action-form" id="mintForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Recipient Address</label>
+                                    <input type="text" class="form-input" id="mintToAddress" placeholder="0x..." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Amount</label>
+                                    <input type="number" class="form-input" id="mintAmount" placeholder="0.00" step="0.01" />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-success" onclick="mintTokens()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+
+                        <!-- Burn Form -->
+                        <div class="action-form" id="burnForm">
+                            <div class="form-row single">
+                                <div class="form-group">
+                                    <label class="form-label">Amount to Burn</label>
+                                    <input type="number" class="form-input" id="burnAmount" placeholder="0.00" step="0.01" />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-danger" onclick="burnTokens()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- Account Controls -->
+                    <div class="admin-section">
+                        <div class="section-title">🔒 Account Controls</div>
+                        
+                        <button class="action-btn btn-warning" onclick="showForm('freezeForm')">
+                            ❄️ Freeze Account
+                        </button>
+                        <button class="action-btn btn-success" onclick="showForm('unfreezeForm')">
+                            🔓 Unfreeze Account
+                        </button>
+
+                        <!-- Freeze Form -->
+                        <div class="action-form" id="freezeForm">
+                            <div class="form-row single">
+                                <div class="form-group">
+                                    <label class="form-label">Account Address</label>
+                                    <input type="text" class="form-input" id="freezeAccountAddress" placeholder="0x..." />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-warning" onclick="freezeAccount()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+
+                        <!-- Unfreeze Form -->
+                        <div class="action-form" id="unfreezeForm">
+                            <div class="form-row single">
+                                <div class="form-group">
+                                    <label class="form-label">Account Address</label>
+                                    <input type="text" class="form-input" id="unfreezeAccountAddress" placeholder="0x..." />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-success" onclick="unfreezeAccount()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- Asset Seizure -->
+                    <div class="admin-section">
+                        <div class="section-title">⚖️ Asset Seizure</div>
+                        
+                        <button class="action-btn btn-danger" onclick="showForm('seizeForm')">
+                            🚨 Seize Assets
+                        </button>
+                        <button class="action-btn btn-success" onclick="showForm('releaseForm')">
+                            ✅ Release Locked
+                        </button>
+                        <button class="action-btn btn-danger" onclick="showForm('confiscateForm')">
+                            ⚡ Confiscate Locked
+                        </button>
+
+                        <!-- Seize Form -->
+                        <div class="action-form" id="seizeForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Account Address</label>
+                                    <input type="text" class="form-input" id="seizeFromAddress" placeholder="0x..." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Amount</label>
+                                    <input type="number" class="form-input" id="seizeAmount" placeholder="0.00" step="0.01" />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-danger" onclick="seizeAssets()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+
+                        <!-- Release Form -->
+                        <div class="action-form" id="releaseForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Account Address</label>
+                                    <input type="text" class="form-input" id="releaseAccountAddress" placeholder="0x..." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Amount</label>
+                                    <input type="number" class="form-input" id="releaseAmount" placeholder="0.00" step="0.01" />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-success" onclick="releaseLocked()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+
+                        <!-- Confiscate Form -->
+                        <div class="action-form" id="confiscateForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Account Address</label>
+                                    <input type="text" class="form-input" id="confiscateAccountAddress" placeholder="0x..." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Amount</label>
+                                    <input type="number" class="form-input" id="confiscateAmount" placeholder="0.00" step="0.01" />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-danger" onclick="confiscateLocked()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- System Control -->
+                    <div class="admin-section">
+                        <div class="section-title">⏸️ System Control</div>
+                        
+                        <button class="action-btn btn-warning" onclick="pauseContract()">
+                            ⏸️ Pause Contract
+                        </button>
+                        <button class="action-btn btn-success" onclick="unpauseContract()">
+                            ▶️ Unpause Contract
+                        </button>
+                    </div>
+
+                    <!-- Ownership Management -->
+                    <div class="admin-section">
+                        <div class="section-title">👑 Ownership Management</div>
+                        
+                        <button class="action-btn btn-warning" onclick="showForm('transferOwnershipForm')">
+                            🔄 Transfer Ownership
+                        </button>
+                        <button class="action-btn btn-danger" onclick="renounceOwnership()">
+                            ⚠️ Renounce Ownership
+                        </button>
+
+                        <!-- Transfer Ownership Form -->
+                        <div class="action-form" id="transferOwnershipForm">
+                            <div class="form-row single">
+                                <div class="form-group">
+                                    <label class="form-label">New Owner Address</label>
+                                    <input type="text" class="form-input" id="newOwnerAddress" placeholder="0x..." />
+                                    <div class="form-help-text">Warning: This will permanently transfer ownership to the new address.</div>
+                                </div>
+                            </div>
+                            <button class="action-btn btn-warning" onclick="transferOwnership()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- System Configuration -->
+                    <div class="admin-section">
+                        <div class="section-title">🔧 System Configuration</div>
+                        
+                        <button class="action-btn btn-primary" onclick="showForm('updateUriForm')">
+                            🔗 Update Auth URI
+                        </button>
+                        <button class="action-btn btn-secondary" onclick="showForm('upgradeForm')">
+                            🔄 Upgrade Contract
+                        </button>
+                        <button class="action-btn btn-success" onclick="showForm('redeemForm')">
+                            💎 Redeem Tokens
+                        </button>
+
+                        <!-- Redeem Form -->
+                        <div class="action-form" id="redeemForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Recipient Address</label>
+                                    <input type="text" class="form-input" id="redeemToAddress" placeholder="0x..." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Amount</label>
+                                    <input type="number" class="form-input" id="redeemAmount" placeholder="0.00" step="0.01" />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-success" onclick="redeemTokens()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+
+                        <!-- Update URI Form -->
+                        <div class="action-form" id="updateUriForm">
+                            <div class="form-row single">
+                                <div class="form-group">
+                                    <label class="form-label">New Authorization URI</label>
+                                    <input type="text" class="form-input" id="newAuthUri" placeholder="https://..." />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-primary" onclick="updateAuthUri()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+
+                        <!-- Upgrade Form -->
+                        <div class="action-form" id="upgradeForm">
+                            <div class="form-row single">
+                                <div class="form-group">
+                                    <label class="form-label">New Implementation Address</label>
+                                    <input type="text" class="form-input" id="newImplementation" placeholder="0x..." />
+                                </div>
+                            </div>
+                            <button class="action-btn btn-secondary" onclick="upgradeContract()">Execute</button>
+                            <button class="action-btn btn-secondary" onclick="hideAllForms()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Messages -->
+            <div class="loading" id="loading">
+                Processing request...
+            </div>
+            <div class="error" id="error"></div>
+            <div class="success" id="success"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Admin Panel for Deposit Token Contract • Use with caution - All operations are irreversible
+        </div>
+    </div>
+
+    <script>
+        // Configuration - will be loaded from server
+        let config = {
+            walletApiUrl: 'http://localhost:3000/admin',
+            rpcUrl: 'http://localhost:8545',
+            depositTokenAddress: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+        };
+
+        // Global state
+        let adminConnected = false;
+        let adminAddress = null;
+        let adminWalletId = null;
+        let contractInfo = {};
+
+        // DOM elements
+        const elements = {
+            connectionStatus: document.getElementById('connectionStatus'),
+            authForm: document.getElementById('authForm'),
+            authInfo: document.getElementById('authInfo'),
+            adminFunctions: document.getElementById('adminFunctions'),
+            adminAddress: document.getElementById('adminAddress'),
+            contractOwner: document.getElementById('contractOwner'),
+            totalSupply: document.getElementById('totalSupply'),
+            authorizationUri: document.getElementById('authorizationUri'),
+            loading: document.getElementById('loading'),
+            error: document.getElementById('error'),
+            success: document.getElementById('success')
+        };
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initialize);
+
+        async function loadConfiguration() {
+            try {
+                const response = await fetch('/config');
+                if (response.ok) {
+                    const serverConfig = await response.json();
+                    config.walletApiUrl = serverConfig.adminApiUrl;
+                    config.rpcUrl = serverConfig.rpcUrl;
+                    config.depositTokenAddress = serverConfig.depositTokenAddress;
+                    
+                    console.log('Admin configuration loaded:', config);
+                } else {
+                    console.warn('Failed to load server configuration, using defaults');
+                }
+            } catch (error) {
+                console.warn('Failed to load server configuration, using defaults:', error);
+            }
+        }
+
+        async function initialize() {
+            try {
+                showLoading('Loading configuration...');
+                await loadConfiguration();
+                
+                showLoading('Loading contract information...');
+                await loadContractInfo();
+                hideLoading();
+            } catch (error) {
+                hideLoading();
+                showError('Failed to load contract information: ' + error.message);
+            }
+        }
+
+        async function loadContractInfo() {
+            const response = await fetch(`${config.walletApiUrl}/contract/info`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch contract info');
+            }
+            contractInfo = await response.json();
+            
+            elements.contractOwner.textContent = formatAddress(contractInfo.owner);
+            elements.totalSupply.textContent = contractInfo.totalSupply + ' ' + contractInfo.symbol;
+            // Authorization URI would be loaded if available
+        }
+
+        async function connectAdmin() {
+            const privateKey = document.getElementById('adminPrivateKey').value.trim();
+            
+            if (!privateKey) {
+                showError('Please enter a private key');
+                return;
+            }
+            
+            if (!isValidPrivateKey(privateKey)) {
+                showError('Invalid private key format. Please enter a 64-character hex string.');
+                return;
+            }
+            
+            try {
+                showLoading('Connecting administrator...');
+                
+                // Import the admin wallet
+                const walletId = 'admin_' + Date.now();
+                const importResponse = await fetch(`${config.walletApiUrl}/import`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: walletId,
+                        privateKey: privateKey.startsWith('0x') ? privateKey : '0x' + privateKey
+                    })
+                });
+                
+                if (!importResponse.ok) {
+                    const error = await importResponse.json();
+                    throw new Error(error.error || 'Failed to import admin wallet');
+                }
+                
+                const importResult = await importResponse.json();
+                
+                // Verify admin is contract owner
+                if (importResult.address.toLowerCase() !== contractInfo.owner.toLowerCase()) {
+                    // Remove the imported wallet since it's not the owner
+                    await fetch(`${config.walletApiUrl}/wallets/${walletId}`, { method: 'DELETE' });
+                    throw new Error('This address is not the contract owner. Only the contract owner can access admin functions.');
+                }
+                
+                // Update state
+                adminConnected = true;
+                adminAddress = importResult.address;
+                adminWalletId = walletId;
+                
+                // Update UI
+                elements.connectionStatus.classList.add('connected');
+                elements.adminAddress.textContent = adminAddress;
+                elements.authForm.style.display = 'none';
+                elements.authInfo.style.display = 'block';
+                elements.adminFunctions.style.display = 'block';
+                
+                hideLoading();
+                showSuccess('Administrator connected successfully!');
+                
+                // Clear the private key field
+                document.getElementById('adminPrivateKey').value = '';
+                
+            } catch (error) {
+                hideLoading();
+                showError('Failed to connect administrator: ' + error.message);
+            }
+        }
+
+        async function disconnectAdmin() {
+            if (adminWalletId) {
+                try {
+                    await fetch(`${config.walletApiUrl}/wallets/${adminWalletId}`, { method: 'DELETE' });
+                } catch (error) {
+                    console.error('Error removing admin wallet:', error);
+                }
+            }
+            
+            // Reset state
+            adminConnected = false;
+            adminAddress = null;
+            adminWalletId = null;
+            
+            // Update UI
+            elements.connectionStatus.classList.remove('connected');
+            elements.adminAddress.textContent = 'Not connected';
+            elements.authForm.style.display = 'block';
+            elements.authInfo.style.display = 'none';
+            elements.adminFunctions.style.display = 'none';
+            
+            hideAllForms();
+            showSuccess('Administrator disconnected.');
+        }
+
+        // Form management
+        function showForm(formId) {
+            hideAllForms();
+            document.getElementById(formId).classList.add('active');
+        }
+
+        function hideAllForms() {
+            document.querySelectorAll('.action-form').forEach(form => {
+                form.classList.remove('active');
+            });
+        }
+
+        // Admin Functions
+        async function executeAdminFunction(endpoint, data, successMessage) {
+            if (!adminConnected) {
+                showError('Administrator not connected');
+                return;
+            }
+            
+            try {
+                showLoading('Executing admin function...');
+                
+                const response = await fetch(`${config.walletApiUrl}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        adminWalletId: adminWalletId,
+                        ...data
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Admin function failed');
+                }
+                
+                hideLoading();
+                hideAllForms();
+                showSuccess(successMessage + ` Transaction: ${result.transactionHash?.slice(0, 10)}...`);
+                
+                // Refresh contract info
+                await loadContractInfo();
+                
+            } catch (error) {
+                hideLoading();
+                showError('Admin function failed: ' + error.message);
+            }
+        }
+
+        // User Management Functions
+        async function registerUser() {
+            const userAddress = document.getElementById('registerUserAddress').value.trim();
+            const sponsorAddress = document.getElementById('registerSponsorAddress').value.trim();
+            
+            if (!isValidAddress(userAddress) || !isValidAddress(sponsorAddress)) {
+                showError('Please enter valid addresses');
+                return;
+            }
+            
+            await executeAdminFunction('/register-user', {
+                userAddress,
+                sponsorAddress
+            }, 'User registered successfully!');
+        }
+
+        async function setSponsor() {
+            const accountAddress = document.getElementById('setSponsorAccountAddress').value.trim();
+            const sponsorAddress = document.getElementById('setSponsorNewSponsor').value.trim();
+            
+            if (!isValidAddress(accountAddress) || !isValidAddress(sponsorAddress)) {
+                showError('Please enter valid addresses');
+                return;
+            }
+            
+            await executeAdminFunction('/set-sponsor', {
+                accountAddress,
+                sponsorAddress
+            }, 'Sponsor updated successfully!');
+        }
+
+        async function moveAccount() {
+            const currentAddress = document.getElementById('moveAccountCurrentAddress').value.trim();
+            const newAddress = document.getElementById('moveAccountNewAddress').value.trim();
+            
+            if (!isValidAddress(currentAddress) || !isValidAddress(newAddress)) {
+                showError('Please enter valid addresses');
+                return;
+            }
+            
+            await executeAdminFunction('/move-account', {
+                currentAddress,
+                newAddress
+            }, 'Account moved successfully!');
+        }
+
+        // Sponsor Management Functions
+        async function addSponsor() {
+            const sponsorAddress = document.getElementById('newSponsorAddress').value.trim();
+            
+            if (!isValidAddress(sponsorAddress)) {
+                showError('Please enter a valid address');
+                return;
+            }
+            
+            await executeAdminFunction('/add-sponsor', {
+                sponsorAddress
+            }, 'Sponsor added successfully!');
+        }
+
+        async function removeSponsor() {
+            const sponsorAddress = document.getElementById('removeSponsorAddress').value.trim();
+            
+            if (!isValidAddress(sponsorAddress)) {
+                showError('Please enter a valid address');
+                return;
+            }
+            
+            await executeAdminFunction('/remove-sponsor', {
+                sponsorAddress
+            }, 'Sponsor removed successfully!');
+        }
+
+        // Token Operation Functions
+        async function mintTokens() {
+            const toAddress = document.getElementById('mintToAddress').value.trim();
+            const amount = document.getElementById('mintAmount').value.trim();
+            
+            if (!isValidAddress(toAddress) || !amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                showError('Please enter valid address and amount');
+                return;
+            }
+            
+            await executeAdminFunction('/mint', {
+                toAddress,
+                amount
+            }, 'Tokens minted successfully!');
+        }
+
+        async function burnTokens() {
+            const amount = document.getElementById('burnAmount').value.trim();
+            
+            if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                showError('Please enter a valid amount');
+                return;
+            }
+            
+            await executeAdminFunction('/burn', {
+                amount
+            }, 'Tokens burned successfully!');
+        }
+
+        // Account Control Functions
+        async function freezeAccount() {
+            const accountAddress = document.getElementById('freezeAccountAddress').value.trim();
+            
+            if (!isValidAddress(accountAddress)) {
+                showError('Please enter a valid address');
+                return;
+            }
+            
+            await executeAdminFunction('/freeze', {
+                accountAddress
+            }, 'Account frozen successfully!');
+        }
+
+        async function unfreezeAccount() {
+            const accountAddress = document.getElementById('unfreezeAccountAddress').value.trim();
+            
+            if (!isValidAddress(accountAddress)) {
+                showError('Please enter a valid address');
+                return;
+            }
+            
+            await executeAdminFunction('/unfreeze', {
+                accountAddress
+            }, 'Account unfrozen successfully!');
+        }
+
+        // Asset Seizure Functions
+        async function seizeAssets() {
+            const fromAddress = document.getElementById('seizeFromAddress').value.trim();
+            const amount = document.getElementById('seizeAmount').value.trim();
+            
+            if (!isValidAddress(fromAddress) || !amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                showError('Please enter valid address and amount');
+                return;
+            }
+            
+            await executeAdminFunction('/seize', {
+                fromAddress,
+                amount
+            }, 'Assets seized successfully!');
+        }
+
+        async function releaseLocked() {
+            const accountAddress = document.getElementById('releaseAccountAddress').value.trim();
+            const amount = document.getElementById('releaseAmount').value.trim();
+            
+            if (!isValidAddress(accountAddress) || !amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                showError('Please enter valid address and amount');
+                return;
+            }
+            
+            await executeAdminFunction('/release-locked', {
+                accountAddress,
+                amount
+            }, 'Locked balance released successfully!');
+        }
+
+        async function confiscateLocked() {
+            const accountAddress = document.getElementById('confiscateAccountAddress').value.trim();
+            const amount = document.getElementById('confiscateAmount').value.trim();
+            
+            if (!isValidAddress(accountAddress) || !amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                showError('Please enter valid address and amount');
+                return;
+            }
+            
+            await executeAdminFunction('/confiscate-locked', {
+                accountAddress,
+                amount
+            }, 'Locked balance confiscated successfully!');
+        }
+
+        // System Control Functions
+        async function pauseContract() {
+            if (!confirm('Are you sure you want to pause the contract? This will prevent all token transfers until unpaused.')) {
+                return;
+            }
+            
+            await executeAdminFunction('/pause', {}, 'Contract paused successfully!');
+        }
+
+        async function unpauseContract() {
+            await executeAdminFunction('/unpause', {}, 'Contract unpaused successfully!');
+        }
+
+        // Ownership Management Functions
+        async function transferOwnership() {
+            const newOwner = document.getElementById('newOwnerAddress').value.trim();
+            
+            if (!isValidAddress(newOwner)) {
+                showError('Please enter a valid address');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to transfer ownership? This action cannot be undone and you will lose admin access.')) {
+                return;
+            }
+            
+            await executeAdminFunction('/transfer-ownership', {
+                newOwner
+            }, 'Ownership transferred successfully!');
+            
+            // Disconnect after transferring ownership
+            setTimeout(() => {
+                disconnectAdmin();
+            }, 3000);
+        }
+
+        async function renounceOwnership() {
+            if (!confirm('Are you sure you want to renounce ownership? This will permanently remove the owner and disable all admin functions. This action cannot be undone.')) {
+                return;
+            }
+            
+            if (!confirm('FINAL WARNING: Renouncing ownership will make the contract permanently unmanageable. Are you absolutely sure?')) {
+                return;
+            }
+            
+            await executeAdminFunction('/renounce-ownership', {}, 'Ownership renounced successfully!');
+            
+            // Disconnect after renouncing ownership
+            setTimeout(() => {
+                disconnectAdmin();
+            }, 3000);
+        }
+
+        // System Configuration Functions
+        async function updateAuthUri() {
+            const newUri = document.getElementById('newAuthUri').value.trim();
+            
+            if (!newUri) {
+                showError('Please enter a valid URI');
+                return;
+            }
+            
+            await executeAdminFunction('/update-auth-uri', {
+                newUri
+            }, 'Authorization URI updated successfully!');
+        }
+
+        async function upgradeContract() {
+            const newImplementation = document.getElementById('newImplementation').value.trim();
+            
+            if (!isValidAddress(newImplementation)) {
+                showError('Please enter a valid implementation address');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to upgrade the contract? This action cannot be undone.')) {
+                return;
+            }
+            
+            await executeAdminFunction('/upgrade-contract', {
+                newImplementation
+            }, 'Contract upgraded successfully!');
+        }
+
+        async function redeemTokens() {
+            const toAddress = document.getElementById('redeemToAddress').value.trim();
+            const amount = document.getElementById('redeemAmount').value.trim();
+            
+            if (!isValidAddress(toAddress) || !amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                showError('Please enter valid address and amount');
+                return;
+            }
+            
+            await executeAdminFunction('/redeem', {
+                toAddress,
+                amount
+            }, 'Tokens redeemed successfully!');
+        }
+
+        // Utility functions
+        function formatAddress(address) {
+            if (!address || address.length < 10) return address;
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+        function isValidAddress(address) {
+            return /^0x[a-fA-F0-9]{40}$/.test(address);
+        }
+
+        function isValidPrivateKey(privateKey) {
+            const cleanKey = privateKey.replace(/^0x/, '');
+            return /^[a-fA-F0-9]{64}$/.test(cleanKey);
+        }
+
+        function showLoading(message = 'Loading...') {
+            elements.loading.textContent = message;
+            elements.loading.style.display = 'block';
+            hideMessages(['loading']);
+        }
+
+        function hideLoading() {
+            elements.loading.style.display = 'none';
+        }
+
+        function showError(message) {
+            elements.error.textContent = message;
+            elements.error.style.display = 'block';
+            hideMessages(['error']);
+            setTimeout(() => {
+                elements.error.style.display = 'none';
+            }, 8000);
+        }
+
+        function showSuccess(message) {
+            elements.success.textContent = message;
+            elements.success.style.display = 'block';
+            hideMessages(['success']);
+            setTimeout(() => {
+                elements.success.style.display = 'none';
+            }, 5000);
+        }
+
+        function hideMessages(except = []) {
+            if (!except.includes('loading')) elements.loading.style.display = 'none';
+            if (!except.includes('error')) elements.error.style.display = 'none';
+            if (!except.includes('success')) elements.success.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
