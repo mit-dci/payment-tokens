@@ -12,16 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// bank-server.ts - Deposit Token Authorization Server
+// bank-server.ts - Payment Token Authorization Server
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const ethers_1 = require("ethers");
 const wallet_api_1 = __importDefault(require("./wallet-api"));
+const admin_api_1 = __importDefault(require("./admin-api"));
 // Load environment variables
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT || '3000');
+const RPC_URL = process.env.RPC_URL || 'http://localhost:8545';
+const DEPOSIT_TOKEN_ADDRESS = process.env.DEPOSIT_TOKEN_ADDRESS || '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 // Bank server configuration (in production, use secure key management)
 const BANK_PRIVATE_KEY = process.env.BANK_PRIVATE_KEY || '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
 console.log("BANK_PRIVATE_KEY", BANK_PRIVATE_KEY);
@@ -42,6 +45,8 @@ app.use((req, res, next) => {
 });
 // Mount wallet API
 app.use('/wallet', wallet_api_1.default);
+// Mount admin API
+app.use('/admin', admin_api_1.default);
 // Mock database for user accounts and nonces
 const userAccounts = {};
 // Bank server endpoints
@@ -49,7 +54,7 @@ const userAccounts = {};
 app.get('/bank/info', (_req, res) => {
     res.json({
         bankAddress: bankWallet.address,
-        message: 'Deposit Token Bank Authorization Server',
+        message: 'Payment Token Bank Authorization Server',
         endpoints: [
             'GET /bank/info - Bank information',
             'POST /bank/register - Register user account',
@@ -64,7 +69,6 @@ app.post('/bank/register', (req, res) => {
     if (!address || !ethers_1.ethers.utils.isAddress(address)) {
         return res.status(400).json({ error: 'Valid address required' });
     }
-    console.log("address", address);
     userAccounts[address.toLowerCase()] = {
         nonce: 0,
         sponsor: bankWallet.address,
@@ -95,7 +99,7 @@ app.get('/bank/nonce/:address', (req, res) => {
 // POST /bank/authorize - Create signed authorization for transfer
 app.post('/bank/authorize', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { sender, recipient, amount, expiration } = req.body;
+        const { sender, recipient, amount, nonce, expiration } = req.body;
         // Validate inputs
         if (!sender || !recipient || !amount) {
             return res.status(400).json({ error: 'sender, recipient, and amount are required' });
@@ -115,7 +119,7 @@ app.post('/bank/authorize', (req, res) => __awaiter(void 0, void 0, void 0, func
             sender: sender,
             spendingLimit: ethers_1.ethers.utils.parseEther(amount).toString(),
             expiration: authExpiration.toString(),
-            authNonce: senderAccount.nonce.toString()
+            authNonce: (nonce === null || nonce === void 0 ? void 0 : nonce.toString()) || senderAccount.nonce.toString()
         };
         // Encode authorization using ABI encoding
         const encodedAuth = ethers_1.ethers.utils.defaultAbiCoder.encode(['address', 'uint256', 'uint256', 'uint256'], [authorization.sender, authorization.spendingLimit, authorization.expiration, authorization.authNonce]);
@@ -139,16 +143,34 @@ app.post('/bank/authorize', (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(500).json({ error: 'Failed to create authorization' });
     }
 }));
+// Configuration endpoint for frontend
+app.get('/config', (_req, res) => {
+    res.json({
+        rpcUrl: RPC_URL,
+        depositTokenAddress: DEPOSIT_TOKEN_ADDRESS,
+        bankServerUrl: `http://localhost:${PORT}`,
+        walletApiUrl: `http://localhost:${PORT}/wallet`,
+        adminApiUrl: `http://localhost:${PORT}/admin`
+    });
+});
 // Health check endpoint
 app.get('/health', (_req, res) => {
-    res.json({ status: 'healthy', timestamp: Date.now() });
+    res.json({
+        status: 'healthy',
+        timestamp: Date.now(),
+        rpcUrl: RPC_URL,
+        depositTokenAddress: DEPOSIT_TOKEN_ADDRESS
+    });
 });
 // Start the server
 app.listen(PORT, () => {
-    console.log(`=== Deposit Token Bank Server ===`);
+    console.log(`=== Payment Token Bank Server ===`);
     console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`RPC URL: ${RPC_URL}`);
+    console.log(`Contract Address: ${DEPOSIT_TOKEN_ADDRESS}`);
     console.log(`Bank address: ${bankWallet.address}`);
     console.log(`Endpoints available:`);
+    console.log(`  GET  /config - Server configuration`);
     console.log(`  GET  /bank/info - Bank information`);
     console.log(`  POST /bank/register - Register user`);
     console.log(`  POST /bank/authorize - Get authorization`);
@@ -156,5 +178,8 @@ app.listen(PORT, () => {
     console.log(`Wallet UI available:`);
     console.log(`  GET  /wallet - Wallet frontend`);
     console.log(`  GET  /wallet/accounts - List accounts`);
+    console.log(`Admin Panel available:`);
+    console.log(`  GET  /admin - Admin panel frontend`);
+    console.log(`  POST /admin/import - Import admin wallet`);
     console.log(`=====================================`);
 });

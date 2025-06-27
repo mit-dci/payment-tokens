@@ -1,4 +1,4 @@
-// demo-script.ts - Complete deposit token demo
+// demo-script.ts - Complete payment token demo
 import dotenv from 'dotenv';
 import { DepositTokenWallet } from './src/client';
 import axios from 'axios';
@@ -34,11 +34,11 @@ async function waitForBankServer(): Promise<void> {
 }
 
 async function runDemo(): Promise<void> {
-  console.log('🏦 === Deposit Token Demo ===');
+  console.log('🏦 === Payment Token Demo ===');
   console.log('This demo shows a complete flow of:');
   console.log('1. Bank server providing authorizations');
   console.log('2. Wallet client requesting and using authorizations');
-  console.log('3. Executing transfers on the deposit token contract\n');
+  console.log('3. Executing transfers on the payment token contract\n');
 
   try {
     // Wait for bank server
@@ -79,7 +79,7 @@ async function runDemo(): Promise<void> {
 
     console.log('\n🎉 Demo completed!');
     console.log('\nNext steps:');
-    console.log('1. Deploy the deposit token contract using Hardhat/Foundry');
+    console.log('1. Deploy the payment token contract using Hardhat/Foundry');
     console.log('2. Set the bank as a sponsor in the contract');
     console.log('3. Register the wallet address in the contract');
     console.log('4. Mint some tokens to the wallet');

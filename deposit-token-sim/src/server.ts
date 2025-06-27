@@ -1,4 +1,4 @@
-// bank-server.ts - Deposit Token Authorization Server
+// bank-server.ts - Payment Token Authorization Server
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
@@ -40,7 +40,7 @@ app.use('/wallet', walletApi);
 // Mount admin API
 app.use('/admin', adminApi);
 
-// Types for deposit token authorization
+// Types for payment token authorization
 interface BasicAuthorization {
   sender: string;
   spendingLimit: string;
@@ -74,7 +74,7 @@ const userAccounts: Record<string, {
 app.get('/bank/info', (_req: Request, res: Response) => {
   res.json({
     bankAddress: bankWallet.address,
-    message: 'Deposit Token Bank Authorization Server',
+    message: 'Payment Token Bank Authorization Server',
     endpoints: [
       'GET /bank/info - Bank information',
       'POST /bank/register - Register user account',
@@ -210,7 +210,7 @@ app.get('/health', (_req: Request, res: Response) => {
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`=== Deposit Token Bank Server ===`);
+  console.log(`=== Payment Token Bank Server ===`);
   console.log(`Server running at http://localhost:${PORT}`);
   console.log(`RPC URL: ${RPC_URL}`);
   console.log(`Contract Address: ${DEPOSIT_TOKEN_ADDRESS}`);

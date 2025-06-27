@@ -80,7 +80,7 @@ const issuedAuthorizations: Record<string, {
 app.get('/bank/info', (_req: Request, res: Response) => {
   res.json({
     bankAddress: bankWallet.address,
-    message: 'Multi-Use Deposit Token Bank Authorization Server',
+    message: 'Multi-Use Payment Token Bank Authorization Server',
     features: ['multi-use-authorizations', 'usage-tracking', 'authorization-revocation'],
     endpoints: [
       'GET /bank/info - Bank information',
@@ -309,7 +309,7 @@ app.get('/health', (_req: Request, res: Response) => {
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`=== Multi-Use Deposit Token Bank Server ===`);
+  console.log(`=== Multi-Use Payment Token Bank Server ===`);
   console.log(`Server running at http://localhost:${PORT}`);
   console.log(`Bank address: ${bankWallet.address}`);
   console.log(`Endpoints available:`);

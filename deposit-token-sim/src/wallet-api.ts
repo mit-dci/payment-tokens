@@ -18,7 +18,7 @@ const DEMO_WALLETS = {
   'account3': '0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a'
 };
 
-// Enhanced ABI for deposit token contract
+// Enhanced ABI for payment token contract
 const DEPOSIT_TOKEN_ABI = [
   "function transferWithAuthorization(address to, uint256 amount, (bytes authorization, bytes signature) calldata signedAuth) external",
   "function transferWithMultiUseAuthorization(address to, uint256 amount, (bytes authorization, bytes signature) calldata signedAuth) external",

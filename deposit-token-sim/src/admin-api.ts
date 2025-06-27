@@ -9,7 +9,7 @@ const router = express.Router();
 const RPC_URL = process.env.RPC_URL || 'http://localhost:8545';
 const DEPOSIT_TOKEN_ADDRESS = process.env.DEPOSIT_TOKEN_ADDRESS || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
-// Enhanced ABI for deposit token contract with all admin functions
+// Enhanced ABI for payment token contract with all admin functions
 const DEPOSIT_TOKEN_ABI = [
   // View functions
   "function balanceOf(address account) external view returns (uint256)",

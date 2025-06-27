@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deposit Token Wallet</title>
+    <title>Payment Token Wallet</title>
     <style>
         * {
             margin: 0;
@@ -288,6 +288,13 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .action-buttons-send {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
@@ -356,68 +363,6 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .xml-parser-section {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 20px;
-            display: none;
-        }
-
-        .xml-parser-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .xml-parser-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .xml-textarea {
-            width: 100%;
-            height: 120px;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 12px;
-            font-family: monospace;
-            resize: vertical;
-        }
-
-        .xml-fields {
-            margin-top: 12px;
-            display: none;
-        }
-
-        .xml-field {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: white;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            border: 1px solid #e9ecef;
-        }
-
-        .xml-field-name {
-            font-size: 12px;
-            font-weight: 500;
-            color: #666;
-        }
-
-        .xml-field-value {
-            font-size: 12px;
-            font-family: monospace;
-            color: #333;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
 
         .loading {
             display: none;
@@ -524,7 +469,7 @@
 
             <div class="balance-section">
                 <div class="balance-amount" id="balanceAmount">--.--</div>
-                <div class="balance-label">Deposit Tokens</div>
+                <div class="balance-label">Tokens</div>
             </div>
 
             <div class="status-indicators">
@@ -540,17 +485,17 @@
         <!-- Actions Section -->
         <div class="actions-section">
             <div class="action-buttons">
-                <button class="action-btn btn-primary" onclick="showTransferForm()">
-                    💸 Send
+                <button class="action-btn btn-secondary" onclick="registerAccount()">
+                    📝 Register
                 </button>
                 <button class="action-btn btn-secondary" onclick="refreshAccount()">
                     🔄 Refresh
                 </button>
-                <button class="action-btn btn-secondary" onclick="registerAccount()">
-                    📝 Register
-                </button>
-                <button class="action-btn btn-secondary" onclick="showXmlParser()">
-                    📄 XML Parser
+            </div>
+            
+            <div class="action-buttons-send">
+                <button class="action-btn btn-primary" onclick="showTransferForm()">
+                    💸 Send
                 </button>
             </div>
 
@@ -604,25 +549,6 @@
                 </div>
             </div>
 
-            <!-- XML Parser Section -->
-            <div class="xml-parser-section" id="xmlParserSection">
-                <div class="xml-parser-header">
-                    <div class="xml-parser-title">Bank Authorization XML</div>
-                    <button class="action-btn btn-secondary" onclick="hideXmlParser()" style="padding: 4px 8px; font-size: 12px;">✕</button>
-                </div>
-                <textarea class="xml-textarea" id="xmlInput" placeholder="Paste XML authorization data here..."></textarea>
-                <div class="action-buttons">
-                    <button class="action-btn btn-primary" onclick="parseXml()">
-                        Parse XML
-                    </button>
-                    <button class="action-btn btn-secondary" onclick="clearXml()">
-                        Clear
-                    </button>
-                </div>
-                <div class="xml-fields" id="xmlFields">
-                    <!-- Parsed fields will appear here -->
-                </div>
-            </div>
 
             <!-- Status Messages -->
             <div class="loading" id="loading">
@@ -678,9 +604,6 @@
             registrationStatus: document.getElementById('registrationStatus'),
             frozenStatus: document.getElementById('frozenStatus'),
             transferForm: document.getElementById('transferForm'),
-            xmlParserSection: document.getElementById('xmlParserSection'),
-            xmlInput: document.getElementById('xmlInput'),
-            xmlFields: document.getElementById('xmlFields'),
             walletSelector: document.getElementById('walletSelector'),
             walletOptions: document.getElementById('walletOptions'),
             loading: document.getElementById('loading'),
@@ -948,108 +871,6 @@
             }
         }
 
-        function showXmlParser() {
-            elements.xmlParserSection.style.display = 'block';
-            hideMessages();
-        }
-
-        function hideXmlParser() {
-            elements.xmlParserSection.style.display = 'none';
-            clearXml();
-        }
-
-        function parseXml() {
-            const xmlText = elements.xmlInput.value.trim();
-            
-            if (!xmlText) {
-                showError('Please paste XML content first');
-                return;
-            }
-            
-            try {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-                
-                // Check for parsing errors
-                const parseError = xmlDoc.querySelector('parsererror');
-                if (parseError) {
-                    throw new Error('Invalid XML format');
-                }
-                
-                // Extract fields from XML
-                const fields = extractXmlFields(xmlDoc);
-                displayXmlFields(fields);
-                
-                showSuccess('XML parsed successfully!');
-                
-            } catch (error) {
-                showError('XML parsing failed: ' + error.message);
-            }
-        }
-
-        function extractXmlFields(xmlDoc) {
-            const fields = [];
-            
-            // Common authorization fields to look for
-            const fieldNames = [
-                'sender', 'recipient', 'amount', 'expiration', 'nonce',
-                'authorization', 'signature', 'timestamp', 'limit'
-            ];
-            
-            fieldNames.forEach(fieldName => {
-                const elements = xmlDoc.querySelectorAll(fieldName);
-                elements.forEach((element, index) => {
-                    fields.push({
-                        name: fieldName + (index > 0 ? `[${index}]` : ''),
-                        value: element.textContent,
-                        type: 'text'
-                    });
-                });
-            });
-            
-            // Also extract any other elements
-            const allElements = xmlDoc.querySelectorAll('*');
-            allElements.forEach(element => {
-                if (element.children.length === 0 && element.textContent.trim()) {
-                    const tagName = element.tagName.toLowerCase();
-                    if (!fieldNames.includes(tagName)) {
-                        fields.push({
-                            name: tagName,
-                            value: element.textContent,
-                            type: 'text'
-                        });
-                    }
-                }
-            });
-            
-            return fields;
-        }
-
-        function displayXmlFields(fields) {
-            elements.xmlFields.innerHTML = '';
-            
-            if (fields.length === 0) {
-                elements.xmlFields.innerHTML = '<div class="xml-field"><span>No fields found in XML</span></div>';
-            } else {
-                fields.forEach(field => {
-                    const fieldDiv = document.createElement('div');
-                    fieldDiv.className = 'xml-field';
-                    fieldDiv.innerHTML = `
-                        <span class="xml-field-name">${field.name}</span>
-                        <span class="xml-field-value" title="${field.value}">${field.value}</span>
-                    `;
-                    elements.xmlFields.appendChild(fieldDiv);
-                });
-            }
-            
-            elements.xmlFields.style.display = 'block';
-        }
-
-        function clearXml() {
-            elements.xmlInput.value = '';
-            elements.xmlFields.style.display = 'none';
-            elements.xmlFields.innerHTML = '';
-        }
 
         function showWalletSwitcher() {
             populateWalletOptions();

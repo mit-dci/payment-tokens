@@ -5,7 +5,7 @@ const WALLET_API_URL = 'http://localhost:3000/wallet';
 const BANK_API_URL = 'http://localhost:3000/bank';
 
 async function demoWallet() {
-  console.log('🏦 Deposit Token Wallet Demo');
+  console.log('🏦 Payment Token Wallet Demo');
   console.log('============================\n');
 
   try {

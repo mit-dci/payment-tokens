@@ -1,4 +1,4 @@
-// wallet-client.ts - Deposit Token Wallet Client
+// wallet-client.ts - Payment Token Wallet Client
 import dotenv from 'dotenv';
 import { ethers } from 'ethers';
 import axios from 'axios';
@@ -12,7 +12,7 @@ const RPC_URL = process.env.RPC_URL || 'http://localhost:8545'; // Local blockch
 const DEPOSIT_TOKEN_ADDRESS = process.env.DEPOSIT_TOKEN_ADDRESS || '0x5FbDB2315678afecb367f032d93F642f64180aa3'; // Default hardhat deployment
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a'; // Default hardhat account
 
-// Simple ABI for deposit token contract (just the functions we need)
+// Simple ABI for payment token contract (just the functions we need)
 const DEPOSIT_TOKEN_ABI = [
   "function transferWithAuthorization(address to, uint256 amount, (bytes authorization, bytes signature) calldata authorization) external",
   "function balanceOf(address account) external view returns (uint256)",
@@ -218,7 +218,7 @@ async function main() {
   try {
     if (args.length === 0) {
       console.log(`
-Deposit Token Wallet Client
+Payment Token Wallet Client
 
 Usage:
   npm run client info                    - Show wallet and bank info
