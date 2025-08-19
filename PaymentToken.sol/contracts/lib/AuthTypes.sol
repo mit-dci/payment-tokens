@@ -14,14 +14,12 @@ library AuthTypes {
         // If solidity had generics, this would be a generic type T
         // but it does not. So we'll use `bytes` and have the author of
         // the `DepToken` itself implement the authorization structure itself.
-        // TODO: Get a second opinion on this
         // NOTE: This also removes the benefit of EIP-712, which we may prefer
-        // to use instead. Worth considering...
+        // to use instead.
         bytes authorization;
         bytes signature;
     }
 
-    // Authorization size: 140 bytes
     /// @title A basic authorization
     /// @param sender The authorized sender to use this authorization.
     /// @param spendingLimit The spending limit of the authorization.
@@ -31,7 +29,7 @@ library AuthTypes {
         /// @notice The authorized sender to use this authorization.
         address sender;
         /// @notice The spending limit of the authorization.
-        uint256 spendingLimit; // TODO: Does this need to be a more specific amount?
+        uint256 spendingLimit;
         /// @notice The expiration of the authorization (block time).
         uint256 expiration;
         /// @notice The nonce this authorization is associated with.
