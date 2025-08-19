@@ -1,4 +1,4 @@
-NOTE: This is a demo, this code has not had a security audit and is not production ready. It is a sample intended for toy and educational purposes.
+NOTE: This is a demo, this code has not had a security audit and it is not production ready. It is a sample intended for toy and educational purposes.
 
 # Payment Token Demo - Complete Setup Guide
 

@@ -60,26 +60,3 @@ interface ISignedAuth {
         AuthTypes.SignedAuthorization calldata authorization
     ) external returns (bool);
 }
-
-/*
-Scratch space:
-
-Authorization JSON Schema:
-{
-    amount: uint256,
-    expiration: <timestamp>,
-    recipients: [
-        - Either a list of addresses, or some sort of "tag" indicating a group of recipients
-    ],
-    sender: <address>,
-    # Need some way to commit to a number uses in this authorization
-    spendingLimit: uint256,
-}
-
-
-How to revoke?
-
-1) In the USER store a list of revoked authorizations
-2) Should tie the authorization to a user's nonce to handle the spending limit on the auths
-
-*/
